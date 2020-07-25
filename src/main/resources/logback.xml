@@ -13,6 +13,105 @@
         </encoder>
     </appender>
 
+    <!-- 控制台输出日志 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>-->
+            <pattern>%red(%d{yyyy-MM-dd HH:mm:ss.SSS}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{70})[%line] - %cyan(%msg%n)</pattern>
+        </layout>
+    </appender>
+
+    <!-- 组件标识 -->
+    <property name="COMPONENT_ID" value="componentName"/>
+    <!-- 段标识 -->
+    <property name="SEGMENT_ID" value="cascade_service"/>
+
+    <logger name="org.springframework.scheduling">
+        <level value="info"/>
+    </logger>
+
+    <appender name="file-info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${LOG_HOME}/${COMPONENT_ID}.${SEGMENT_ID}.info.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${COMPONENT_ID}.${SEGMENT_ID}.info.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
+            <MaxHistory>3</MaxHistory>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %level ${COMPONENT_ID}.${SEGMENT_ID} [%thread] [%logger{50}:%line]
+                - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <appender name="file-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${LOG_HOME}/${COMPONENT_ID}.${SEGMENT_ID}.error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${COMPONENT_ID}.${SEGMENT_ID}.error.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
+            <MaxHistory>3</MaxHistory>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %level ${COMPONENT_ID}.${SEGMENT_ID} [%thread] [%logger{50}:%line]
+                %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <appender name="file-warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${LOG_HOME}/${COMPONENT_ID}.${SEGMENT_ID}.warn.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${COMPONENT_ID}.${SEGMENT_ID}.warn.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
+            <MaxHistory>3</MaxHistory>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %level ${COMPONENT_ID}.${SEGMENT_ID} [%thread] [%logger{50}:%line]
+                - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+    <!-- 文件输出日志 (文件大小策略进行文件输出，超过指定大小对文件备份)-->
+    <appender name="file-debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${LOG_HOME}/${COMPONENT_ID}.${SEGMENT_ID}.debug.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${COMPONENT_ID}.${SEGMENT_ID}.debug.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
+            <MaxHistory>3</MaxHistory>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %level ${COMPONENT_ID}.${SEGMENT_ID} [%thread] [%logger{50}:%line]
+                - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+
+
     <!--文件输出,时间窗口滚动-->
     <appender name="timeFileOutput" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--日志名,指定最新的文件名，其他文件名使用FileNamePattern -->
@@ -32,7 +131,7 @@
         <!--输出格式-->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <pattern>%red(%d{yyyy-MM-dd HH:mm:ss.SSS}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{70})[%line] - %cyan(%msg%n)</pattern>
             <!--设置编码-->
             <charset>UTF-8</charset>
         </encoder>
@@ -42,7 +141,12 @@
     <!--指定基础的日志输出级别-->
     <root level="INFO">
         <!--appender将会添加到这个loger-->
-        <appender-ref ref="console"/>
+        <appender-ref ref="STDOUT"/>
+        <!--        <appender-ref ref="console"/>-->
+        <appender-ref ref="file-info"/>
+        <appender-ref ref="file-error"/>
+        <appender-ref ref="file-warn"/>
+        <appender-ref ref="file-debug"/>
         <appender-ref ref="timeFileOutput"/>
     </root>
 </configuration>
