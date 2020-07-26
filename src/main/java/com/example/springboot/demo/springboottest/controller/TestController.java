@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
     @RequestMapping("/test1")
-    public String tets(@RequestParam String id) {
+    public String test(@RequestParam String id) {
         log.info("业务日志。。。。。/test....." + id);
         return "Hello World";
     }
