@@ -49,7 +49,8 @@ public class LogAspect {
 
     @Before("controllerAspect()")
     public void doBefore(JoinPoint joinPoint) {
-        log.info("请求钱before。。。。。。。。。。。。。。。。。。。。。");
+        startTime.set(System.currentTimeMillis());
+        log.info("========================= before -- start =========================");
         /*用isDebugEnabled方法判断下是能提升性能的*/
         if (log.isInfoEnabled()) {
             log.info("before " + joinPoint);
@@ -67,10 +68,14 @@ public class LogAspect {
         log.info("################CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         log.info("################TARGET: " + joinPoint.getTarget());//返回的是需要加强的目标类的对象
         log.info("################THIS: " + joinPoint.getThis());//返回的是经过加强后的代理类的对象
+
+        log.info("IP : " + request.getRemoteAddr());
+        log.info("========================= before -- end =========================");
     }
 
     @Around(value = "controllerAspect()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        log.info("========================= around -- start =========================");
         String targetName = joinPoint.getTarget().getClass().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
         String logName = targetName + "." + methodName;
@@ -85,6 +90,7 @@ public class LogAspect {
             log.info("Around通知+end {}, error: {} ", logName, e.getMessage());
             throw e;
         }
+        log.info("========================= around -- end =========================");
         return obj;
     }
 
@@ -94,24 +100,47 @@ public class LogAspect {
      */
     @After("controllerAspect()")
     public void afterMethod(JoinPoint jp) {
+        log.info("========================= After -- start =========================");
         log.info("【后置通知After】 +this is a afterMethod advice...");
+        log.info("========================= After -- end =========================");
     }
 
     //    返回通知：目标方法正常执行完毕时执行以下代码     * @param jp     * @param result    
     @AfterReturning(pointcut = "controllerAspect()", returning = "result")
-    public void afterReturningMethod(JoinPoint jp, Object result) {
-        String methodName = jp.getSignature().getName();
+    public void afterReturningMethod(JoinPoint joinPoint, Object result) {
+        log.info("========================= AfterReturning -- start =========================");
+        String methodName = joinPoint.getSignature().getName();
         log.info("【返回通知AfterReturning】the method 【" + methodName + "】 ends with 【" + result + "】");
+
+        log.info("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName()
+                + "." + joinPoint.getSignature().getName());
+
+        if (result != null) {
+            String str = result.toString();
+            if (str.length() > 200) {
+                str = str.substring(0, 200) + "...";
+            }
+
+            log.info("return 返回值:");
+            log.info(str);
+        }
+
+        log.info("耗时（毫秒） : " + (System.currentTimeMillis() - startTime.get()));
+
+        log.info("========================= after -- end =========================");
     }
+
 
     /**
      * 异常通知：目标方法发生异常的时候执行以下代码
      */
     @AfterThrowing(pointcut = "controllerAspect()", throwing = "ex")
     public void afterThorwingMethod(JoinPoint joinPoint, NullPointerException ex) {
+        log.info("========================= AfterThrowing -- start =========================");
         String methodName = joinPoint.getSignature().getName();
         List<Object> args = Arrays.asList(joinPoint.getArgs());
         System.out.println("连接点方法为：" + methodName + ",参数为：" + args + ",异常为：" + ex);
+        log.info("========================= AfterThrowing -- end =========================");
     }
 }
 /*
