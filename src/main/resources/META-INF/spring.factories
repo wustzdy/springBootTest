@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.example.springboot.demo.springboottest.SpringboottestApplication
+com.wustzdy.springboot.maven.test.SpringboottestApplication
